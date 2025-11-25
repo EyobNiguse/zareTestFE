@@ -35,6 +35,13 @@ The server will run on `http://localhost:3001` by default.
 ### Projects
 
 - `GET /api/projects` - Get all projects
+  - Query parameters (optional):
+    - `status` - Filter by status (e.g., "In Progress", "Planning", "Review")
+    - `priority` - Filter by priority (e.g., "High", "Medium", "Low")
+    - `search` - Search by name or description (case-insensitive)
+    - `sortBy` - Sort by field (e.g., "name", "deadline", "progress", "priority")
+    - `sortOrder` - Sort order: "asc" or "desc" (default: "asc")
+  - Example: `GET /api/projects?status=In Progress&priority=High&sortBy=name&sortOrder=asc`
 - `GET /api/projects/:id` - Get a specific project
 - `POST /api/projects` - Create a new project
 - `PUT /api/projects/:id` - Update a project
@@ -60,6 +67,13 @@ The server will run on `http://localhost:3001` by default.
 ### Team Members
 
 - `GET /api/team` - Get all team members
+  - Query parameters (optional):
+    - `search` - Search by name, email, or role (case-insensitive)
+    - `role` - Filter by role
+    - `status` - Filter by status (e.g., "Active", "Inactive")
+    - `sortBy` - Sort by field (e.g., "name", "email", "role", "projects")
+    - `sortOrder` - Sort order: "asc" or "desc" (default: "asc")
+  - Example: `GET /api/team?search=john&status=Active&sortBy=name`
 - `GET /api/team/:id` - Get a specific team member
 - `POST /api/team` - Create a new team member
 - `PUT /api/team/:id` - Update a team member

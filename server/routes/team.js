@@ -3,10 +3,46 @@ import { getTeamMembers, getTeamMemberById, createTeamMember, updateTeamMember, 
 
 const router = express.Router();
 
-// GET all team members
+// GET all team members with optional filtering and sorting
 router.get('/', (req, res) => {
   try {
-    const members = getTeamMembers();
+    let members = getTeamMembers();
+    const { search, role, status, sortBy, sortOrder } = req.query;
+    
+    // Search by name or email
+    if (search) {
+      const searchLower = search.toLowerCase();
+      members = members.filter(m => 
+        m.name.toLowerCase().includes(searchLower) ||
+        m.email.toLowerCase().includes(searchLower) ||
+        m.role.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Filter by role
+    if (role) {
+      members = members.filter(m => m.role === role);
+    }
+    
+    // Filter by status
+    if (status) {
+      members = members.filter(m => m.status === status);
+    }
+    
+    // Sorting
+    if (sortBy) {
+      const order = sortOrder === 'desc' ? -1 : 1;
+      members.sort((a, b) => {
+        let aVal = a[sortBy];
+        let bVal = b[sortBy];
+        
+        if (typeof aVal === 'string') {
+          return aVal.localeCompare(bVal) * order;
+        }
+        return (aVal - bVal) * order;
+      });
+    }
+    
     res.json(members);
   } catch (error) {
     res.status(500).json({ error: error.message });

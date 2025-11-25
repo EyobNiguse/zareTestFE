@@ -3,10 +3,51 @@ import { getProjects, getProjectById, createProject, updateProject, deleteProjec
 
 const router = express.Router();
 
-// GET all projects
+// GET all projects with optional filtering and sorting
 router.get('/', (req, res) => {
   try {
-    const projects = getProjects();
+    let projects = getProjects();
+    const { status, priority, search, sortBy, sortOrder } = req.query;
+    
+    // Filter by status
+    if (status) {
+      projects = projects.filter(p => p.status === status);
+    }
+    
+    // Filter by priority
+    if (priority) {
+      projects = projects.filter(p => p.priority === priority);
+    }
+    
+    // Search by name or description
+    if (search) {
+      const searchLower = search.toLowerCase();
+      projects = projects.filter(p => 
+        p.name.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Sorting
+    if (sortBy) {
+      const order = sortOrder === 'desc' ? -1 : 1;
+      projects.sort((a, b) => {
+        let aVal = a[sortBy];
+        let bVal = b[sortBy];
+        
+        // Handle nested properties
+        if (sortBy === 'progress') {
+          aVal = (a.tasks.completed / a.tasks.total) * 100;
+          bVal = (b.tasks.completed / b.tasks.total) * 100;
+        }
+        
+        if (typeof aVal === 'string') {
+          return aVal.localeCompare(bVal) * order;
+        }
+        return (aVal - bVal) * order;
+      });
+    }
+    
     res.json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
