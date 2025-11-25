@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, MoreVertical, Calendar, Users } from "lucide-react";
+import { useState } from "react";
 import { useProjectsQuery } from "@/query/queries";
 // get
 
@@ -82,6 +83,10 @@ const priorityColors = {
 
 export default function Projects() {
   const { data, isLoading } = useProjectsQuery({});
+  const [searchField, sestSearchField] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+  const [loading, setLoading] = useState("");
   if (isLoading) return <div>Loading...</div>;
   const projects = data;
   return (
@@ -92,6 +97,9 @@ export default function Projects() {
           <p className="text-muted-foreground mt-2">
             Manage and track all your team projects
           </p>
+        </div>
+        <div>
+          <input type="text" />
         </div>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
